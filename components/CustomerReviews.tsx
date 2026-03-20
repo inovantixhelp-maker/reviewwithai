@@ -30,9 +30,8 @@ const CustomerReviews: React.FC<{ business: any, globalSettings: any }> = ({ bus
             const apiKey = globalSettings.serpapiToken;
             const placeId = business.googlePlaceId;
 
-            // SerpApi Google Maps Reviews API (through CORS proxy)
-            const targetUrl = `https://serpapi.com/search.json?engine=google_maps_reviews&place_id=${placeId}&api_key=${apiKey}&hl=en`;
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+            // SerpApi Google Maps Reviews API (through custom Netlify Proxy to avoid CORS)
+            const proxyUrl = `/.netlify/functions/get-reviews?place_id=${placeId}&api_key=${apiKey}`;
             const response = await fetch(proxyUrl);
 
             if (!response.ok) {
