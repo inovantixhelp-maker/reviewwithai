@@ -38,7 +38,7 @@ const Demo = () => {
                         <span className="text-blue-500">In Action</span>
                     </h1>
                     <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                        See how SmartReview transforms customer feedback into your biggest growth engine.
+                        See how Review With AI transforms customer feedback into your biggest growth engine.
                     </p>
                 </div>
             </section>
@@ -208,7 +208,7 @@ const Demo = () => {
                                         <div className="w-32 h-64 bg-slate-900 rounded-[2.5rem] p-2 border-2 border-slate-800 shadow-xl relative overflow-hidden">
                                             <div className="w-16 h-1 bg-slate-800 rounded-full absolute top-3 left-1/2 -translate-x-1/2 z-10"></div>
                                             <div className="bg-white w-full h-full rounded-[2rem] p-4 flex flex-col items-center gap-4 text-center">
-                                                <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white text-[10px] font-bold">SR</div>
+                                                <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white text-[10px] font-bold">RAI</div>
                                                 <div className="h-2 w-20 bg-slate-100 rounded"></div>
                                                 <div className="flex gap-1">
                                                     {[1, 2, 3, 4, 5].map(i => <Star key={i} size={12} className="text-yellow-400 fill-current" />)}

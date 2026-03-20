@@ -36,7 +36,7 @@ const DashboardMockup = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
                     <div className="w-3 h-3 rounded-full bg-green-400"></div>
                 </div>
-                <div className="text-xs font-medium text-slate-400">smartreview.app/dashboard</div>
+                <div className="text-xs font-medium text-slate-400">reviewwithai.com/dashboard</div>
                 <div className="w-4"></div>
             </div>
             <div className="p-6">
@@ -201,7 +201,7 @@ const Features = () => {
 
                     <div className="relative z-10 px-8 py-16 md:p-20 text-center md:text-left grid md:grid-cols-2 gap-12 items-center">
                         <div>
-                            <h2 className="text-3xl md:text-4xl font-bold mb-6">The Smart Review Solution</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-6">The Review With AI Solution</h2>
                             <p className="text-blue-100 text-lg mb-8 leading-relaxed">
                                 Our intelligent system intercepts negative feedback before it goes public, while guiding happy customers directly to Google.
                             </p>
@@ -402,7 +402,7 @@ const LandingPage = () => {
                                 <div className="w-3 h-3 rounded-full bg-slate-600"></div>
                                 <div className="w-3 h-3 rounded-full bg-slate-600"></div>
                             </div>
-                            <div className="bg-slate-900 px-3 py-1 rounded-md text-xs text-slate-500 w-64">smartreview.app/analytics</div>
+                            <div className="bg-slate-900 px-3 py-1 rounded-md text-xs text-slate-500 w-64">reviewwithai.com/analytics</div>
                         </div>
 
                         {/* Mock Dashboard Grid */}
@@ -447,7 +447,7 @@ const LandingPage = () => {
                     <h2 className="text-3xl font-bold text-center text-slate-900 mb-16">Trusted by 500+ Local Businesses</h2>
                     <div className="grid md:grid-cols-3 gap-8">
                         {[
-                            { text: "Since using SmartReview, our Google rating went from 4.2 to 4.9 in just 3 months. It's magic!", author: "Sarah Jenkins", role: "Owner, The Coffee Spot" },
+                            { text: "Since using Review With AI, our Google rating went from 4.2 to 4.9 in just 3 months. It's magic!", author: "Sarah Jenkins", role: "Owner, The Coffee Spot" },
                             { text: "I love that negative reviews don't go public immediately. It gives me a chance to fix the issue.", author: "Mike Ross", role: "Manager, City Gym" },
                             { text: "The WhatsApp alerts are a lifesaver. I can respond to customers instantly even when I'm not at the store.", author: "Elena Rodriguez", role: "Founder, Bella Spa" }
                         ].map((t, i) => (

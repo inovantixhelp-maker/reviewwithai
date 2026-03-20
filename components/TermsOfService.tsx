@@ -27,13 +27,13 @@ const TermsOfService = () => {
                             <Scale className="text-indigo-600" size={32} />
                             <div>
                                 <h3 className="font-bold text-slate-900 m-0">Agreement to Terms</h3>
-                                <p className="text-slate-600 text-sm m-0">By using SmartReview, you agree to follow our service rules and guidelines.</p>
+                                <p className="text-slate-600 text-sm m-0">By using Review With AI, you agree to follow our service rules and guidelines.</p>
                             </div>
                         </div>
 
                         <h2 className="text-2xl font-bold mb-4">1. Use of Service</h2>
                         <p className="mb-6 text-slate-600 leading-relaxed">
-                            SmartReview provides a platform for managing customer reviews and feedback. You are responsible for any activity that occurs through your account and you agree to use the service in compliance with all applicable laws.
+                            Review With AI provides a platform for managing customer reviews and feedback. You are responsible for any activity that occurs through your account and you agree to use the service in compliance with all applicable laws.
                         </p>
 
                         <h2 className="text-2xl font-bold mb-4">2. Account Registration</h2>
@@ -48,22 +48,22 @@ const TermsOfService = () => {
 
                         <h2 className="text-2xl font-bold mb-4">4. Intellectual Property</h2>
                         <p className="mb-6 text-slate-600 leading-relaxed">
-                            The Service and its original content, features, and functionality are and will remain the exclusive property of SmartReview and its licensors.
+                            The Service and its original content, features, and functionality are and will remain the exclusive property of Review With AI and its licensors.
                         </p>
 
                         <h2 className="text-2xl font-bold mb-4">5. Limitation of Liability</h2>
                         <p className="mb-6 text-slate-600 leading-relaxed">
-                            In no event shall SmartReview be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, or other intangible losses.
+                            In no event shall Review With AI be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, or other intangible losses.
                         </p>
 
                         <h2 className="text-2xl font-bold mb-4">6. Governing Law</h2>
                         <p className="mb-6 text-slate-600 leading-relaxed">
-                            These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which SmartReview operates.
+                            These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which Review With AI operates.
                         </p>
 
                         <div className="mt-12 p-6 bg-slate-900 text-white rounded-2xl">
                             <h3 className="text-xl font-bold mb-2">Need clarification?</h3>
-                            <p className="text-slate-400 mb-0">Our legal team is here to help. Reach out at legal@smartreview.io</p>
+                            <p className="text-slate-400 mb-0">Our legal team is here to help. Reach out at legal@reviewwithai.com</p>
                         </div>
                     </div>
                 </div>

@@ -129,6 +129,7 @@ create table public.global_settings (
   upi_link text,
   google_api_key text,
   whatsapp_api_key text,
+  apify_token text,
   constraint single_row check (id = 1)
 );
 
@@ -165,7 +166,7 @@ on conflict (id) do nothing;
 
 -- Global Settings
 insert into public.global_settings (id, brand_name, support_email, upi_link, google_api_key, whatsapp_api_key) values
-(1, 'SmartReview', 'support@smartreview.com', 'upi://pay?pa=rajrishi786@ybl&pn=Rishi%20Raj&am=1000&cu=INR', '', '')
+(1, 'Review With AI', 'inovantix.help@gmail.com', 'upi://pay?pa=rajrishi786@ybl&pn=Rishi%20Raj&am=1000&cu=INR', '', '')
 on conflict (id) do nothing;
 
 -- Business Sample

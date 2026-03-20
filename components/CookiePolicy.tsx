@@ -33,7 +33,7 @@ const CookiePolicy = () => {
 
                         <h2 className="text-2xl font-bold mb-4 font-display">What Are Cookies?</h2>
                         <p className="mb-8 text-slate-600 leading-relaxed">
-                            Cookies are small text files that are stored on your device when you visit a website. They help us remember your preferences and understand how you interact with SmartReview.
+                            Cookies are small text files that are stored on your device when you visit a website. They help us remember your preferences and understand how you interact with Review With AI.
                         </p>
 
                         <h2 className="text-2xl font-bold mb-6 font-display">Types of Cookies We Use</h2>
@@ -63,7 +63,7 @@ const CookiePolicy = () => {
 
                         <h2 className="text-2xl font-bold mt-12 mb-4 font-display">Controlling Cookies</h2>
                         <p className="mb-6 text-slate-600 leading-relaxed">
-                            Most web browsers allow you to control cookies through their settings. However, disabling essential cookies may limit your ability to use certain features of SmartReview.
+                            Most web browsers allow you to control cookies through their settings. However, disabling essential cookies may limit your ability to use certain features of Review With AI.
                         </p>
                     </div>
                 </div>

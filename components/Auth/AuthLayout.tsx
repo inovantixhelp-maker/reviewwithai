@@ -29,7 +29,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
       </div>
       
       <p className="mt-8 text-slate-400 text-xs font-medium">
-        &copy; 2024 SmartReview SaaS. Secure & Encrypted.
+        &copy; {new Date().getFullYear()} Review With AI. Secure & Encrypted.
       </p>
     </div>
   );

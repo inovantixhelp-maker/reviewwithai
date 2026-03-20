@@ -5,7 +5,7 @@ We have successfully migrated the frontend code to use Supabase. To finalize the
 
 ## 1. Run Database Schema
 1. Go to your [Supabase Dashboard](https://supabase.com/dashboard).
-2. Open your project (`smartreview-saas`).
+2. Open your project (`reviewwithai-saas`).
 3. Go to the **SQL Editor** (sidebar icon with `>_`).
 4. Click **New Query**.
 5. Copy the entire content of `supabase_schema.sql` from your project root.

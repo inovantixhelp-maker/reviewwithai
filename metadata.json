@@ -1,5 +1,5 @@
 {
-  "name": "SmartReview SaaS",
+  "name": "Review With AI SaaS",
   "description": "A comprehensive SaaS platform to help local businesses improve their Google Maps ratings by filtering positive and negative feedback.",
   "requestFramePermissions": [
     "camera"

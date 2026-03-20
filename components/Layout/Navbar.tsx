@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Star, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,10 +15,8 @@ const Navbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20">
                     <Link to="/" className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                        <div className="bg-blue-600 p-2 rounded-xl text-white">
-                            <Star size={24} fill="currentColor" />
-                        </div>
-                        <span className="font-bold text-2xl text-slate-900 tracking-tight">SmartReview</span>
+                        <img src="/logo.svg" alt="Review With AI Logo" className="h-10 w-10" />
+                        <span className="font-bold text-2xl text-slate-900 tracking-tight">Review With <span className="text-blue-600">AI</span></span>
                     </Link>
 
                     <div className="hidden md:flex items-center space-x-8">

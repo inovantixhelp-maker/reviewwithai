@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
                         <p className="mb-6 text-slate-600 leading-relaxed">
                             If you have any questions about this Privacy Policy, please contact us at:
                             <br />
-                            <span className="font-bold text-blue-600 mt-2 block">privacy@smartreview.io</span>
+                            <span className="font-bold text-blue-600 mt-2 block">privacy@reviewwithai.com</span>
                         </p>
                     </div>
                 </div>

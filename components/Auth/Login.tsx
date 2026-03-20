@@ -41,10 +41,10 @@ const Login: React.FC = () => {
 
   const fillCredentials = (type: 'owner' | 'admin') => {
     if (type === 'owner') {
-      setEmail('owner@smartreview.com');
+      setEmail('owner@reviewwithai.com');
       setPassword('pass123');
     } else {
-      setEmail('admin@smartreview.com');
+      setEmail('admin@reviewwithai.com');
       setPassword('admin123');
     }
   };
@@ -66,7 +66,7 @@ const Login: React.FC = () => {
               type="email"
               required
               className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
-              placeholder="owner@smartreview.com"
+              placeholder="owner@reviewwithai.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

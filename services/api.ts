@@ -190,6 +190,17 @@ export const api = {
         return (data || []).map(mapBusinessFromDB);
     },
 
+    deleteBusiness: async (id: string) => {
+        // Clean up all associated data manually as some tables don't have cascade delete
+        await supabase.from('tickets').delete().eq('client_id', id);
+        await supabase.from('transactions').delete().eq('business_id', id);
+        await supabase.from('profiles').delete().eq('business_id', id);
+        // Feedbacks will be deleted automatically due to 'on delete cascade' in schema
+        
+        const { error } = await supabase.from('businesses').delete().eq('id', id);
+        if (error) throw error;
+    },
+
     incrementScanCount: async (businessId: string) => {
         // RPC is better, but read-update-write for MVP
         const { data } = await supabase.rpc('increment_scan_count', { row_id: businessId });
@@ -351,11 +362,12 @@ export const api = {
     getGlobalSettings: async (): Promise<GlobalSettings> => {
         const { data } = await supabase.from('global_settings').select('*').single();
         if (!data) return {
-            brandName: 'SmartReview',
-            supportEmail: 'support@smartreview.com',
+            brandName: 'Review With AI',
+            supportEmail: 'support@reviewwithai.com',
             upiLink: '',
             googleApiKey: '',
             whatsappApiKey: '',
+            serpapiToken: '',
             paymentQrCode: undefined
         }; // Defaults
         return mapGlobalSettingsFromDB(data);
@@ -592,7 +604,8 @@ function mapGlobalSettingsFromDB(db: any): GlobalSettings {
         paymentQrCode: db.payment_qr_code,
         upiLink: db.upi_link,
         googleApiKey: db.google_api_key,
-        whatsappApiKey: db.whatsapp_api_key
+        whatsappApiKey: db.whatsapp_api_key,
+        serpapiToken: db.apify_token
     };
 }
 
@@ -603,7 +616,8 @@ function mapGlobalSettingsToDB(s: GlobalSettings): any {
         payment_qr_code: s.paymentQrCode,
         upi_link: s.upiLink,
         google_api_key: s.googleApiKey,
-        whatsapp_api_key: s.whatsappApiKey
+        whatsapp_api_key: s.whatsappApiKey,
+        apify_token: s.serpapiToken
     };
 }
 

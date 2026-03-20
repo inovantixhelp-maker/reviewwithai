@@ -3,18 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import {
   BarChart3, Settings, QrCode, MessageCircle, TrendingUp, CheckCircle, AlertCircle,
   Download, LayoutDashboard, Star, LogOut, CreditCard, ExternalLink,
-  Clock, HelpCircle, ShieldAlert, Check, X, Menu, Phone, MapPin, Share2, Copy, ChevronRight, Upload, UserCircle
+  Clock, HelpCircle, ShieldAlert, Check, X, Menu, Phone, MapPin, Share2, Copy, ChevronRight, Upload, UserCircle, ShoppingBag
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { api } from '../services/api';
 import { Plan, Ticket, TicketCategory, TicketPriority, Message, UserRole, Feedback, Transaction, SubscriptionPlan } from '../types';
 import SupportSection from './Support/SupportSection';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import QRCodeStyling from 'qr-code-styling';
+import CustomerReviews from './CustomerReviews';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'overview' | 'feedbacks' | 'qr' | 'map' | 'settings' | 'billing' | 'support' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'feedbacks' | 'qr' | 'map' | 'settings' | 'offers' | 'billing' | 'support' | 'profile'>('overview');
   const [business, setBusiness] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
@@ -32,10 +33,11 @@ const Dashboard: React.FC = () => {
 
   // Settings State
 
-  const [settingsForm, setSettingsForm] = useState({
+  const [settingsForm, setSettingsForm] = useState<any>({
     enabled: false,
     customMessage: '',
-    couponCode: ''
+    couponCode: '',
+    offers: []
   });
 
   // Billing State
@@ -46,6 +48,28 @@ const Dashboard: React.FC = () => {
   const [paymentProof, setPaymentProof] = useState<string | null>(null);
 
   const [mapSearch, setMapSearch] = useState('');
+  const [customQrUrl, setCustomQrUrl] = useState<string>('');
+
+  useEffect(() => {
+    if (business?.id) {
+      const qrCode = new QRCodeStyling({
+        width: 600,
+        height: 600,
+        data: `${window.location.origin}/#/b/${business.id}`,
+        image: '/maps-pin.png',
+        dotsOptions: { color: '#77ac23', type: 'rounded' },
+        backgroundOptions: { color: '#ffffff' },
+        imageOptions: { crossOrigin: 'anonymous', margin: 5, imageSize: 0.35 },
+        cornersSquareOptions: { color: '#77ac23', type: 'extra-rounded' },
+        cornersDotOptions: { color: '#77ac23', type: 'dot' }
+      });
+      qrCode.getRawData('png').then((blob) => {
+        if (blob) {
+          setCustomQrUrl(URL.createObjectURL(blob as Blob));
+        }
+      });
+    }
+  }, [business?.id]);
 
   const refreshData = async () => {
     const userStr = sessionStorage.getItem('current_user');
@@ -87,7 +111,8 @@ const Dashboard: React.FC = () => {
             setSettingsForm({
               enabled: biz.settings.enabled || false,
               customMessage: biz.settings.customMessage || '',
-              couponCode: biz.settings.couponCode || ''
+              couponCode: biz.settings.couponCode || '',
+              offers: biz.settings.offers || []
             });
           }
         }
@@ -129,14 +154,31 @@ const Dashboard: React.FC = () => {
       canvas.height = H;
       const ctx = canvas.getContext('2d')!;
 
-      // ── 1. Paper background
-      ctx.fillStyle = '#fcfbf9';
+      // ── 1. Load Background Image
+      const bgImg = await new Promise<HTMLImageElement>((res, rej) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => res(img);
+        img.onerror = () => rej(new Error('Failed to load background image'));
+        img.src = '/poster-bg.png';
+      }).catch(() => null);
+
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(0,0,0,0.018)';
-      for (let x = 0; x < W; x += 6) for (let y = 0; y < H; y += 6) ctx.fillRect(x, y, 1, 1);
+
+      if (bgImg) {
+        ctx.save();
+        ctx.globalAlpha = 0.3; // Lighten the background image so stars/text stand out
+        ctx.drawImage(bgImg, 0, 0, W, H);
+        ctx.restore();
+      } else {
+        // Fallback to textured background
+        ctx.fillStyle = 'rgba(0,0,0,0.018)';
+        for (let x = 0; x < W; x += 6) for (let y = 0; y < H; y += 6) ctx.fillRect(x, y, 1, 1);
+      }
 
       // ── 2. Outer border
-      ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(26,26,26,0.1)'; ctx.lineWidth = 1; // Subtle border for colorful bg
       ctx.strokeRect(20, 20, W - 40, H - 40);
 
       // ── 3. Logo circle (pink) + business name SIDE BY SIDE
@@ -216,17 +258,22 @@ const Dashboard: React.FC = () => {
         ctx.closePath(); ctx.fill();
       }
 
-      // ── 8. QR Code — BIGGER (300px)
-      const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business?.id}`)}&size=500x500&format=png&margin=8`;
+      // ── 8. QR Code — Custom Premium Design (300px)
       const qrImg = await new Promise<HTMLImageElement>((res, rej) => {
-        const img = new Image(); img.crossOrigin = 'anonymous';
-        img.onload = () => res(img); img.onerror = rej; img.src = qrSrc;
+        const img = new Image();
+        img.onload = () => res(img);
+        img.onerror = rej;
+        img.src = customQrUrl || `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business.id}`)}&size=600x600&color=77ac23`;
       });
-      const qrSz = 300, qrX = (W - qrSz) / 2, qrY = 522, qrP = 14, qrB = 7;
+
+      const qrSz = 300, qrX = (W - qrSz) / 2, qrY = 522, qrP = 14;
+      // White background for QR to ensure readability on colorful bg
       ctx.fillStyle = '#fff';
-      ctx.fillRect(qrX - qrP - qrB, qrY - qrP - qrB, qrSz + (qrP + qrB) * 2, qrSz + (qrP + qrB) * 2);
-      ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = qrB;
-      ctx.strokeRect(qrX - qrP - qrB / 2, qrY - qrP - qrB / 2, qrSz + qrP * 2 + qrB, qrSz + qrP * 2 + qrB);
+      ctx.beginPath();
+      const r = 40; // rounded white bg
+      ctx.roundRect(qrX - qrP, qrY - qrP, qrSz + qrP * 2, qrSz + qrP * 2, r);
+      ctx.fill();
+
       ctx.drawImage(qrImg, qrX, qrY, qrSz, qrSz);
 
       // ── 9. "Scan QR code or go to" — URL removed, only this line
@@ -236,7 +283,7 @@ const Dashboard: React.FC = () => {
 
       // ── 10. Footer: fixed website + phone number — moved below illustration
       const footerY = 1028;
-      ctx.fillStyle = '#2b5797'; ctx.font = '600 20px Arial,sans-serif';
+      ctx.fillStyle = '#000000ff'; ctx.font = '600 20px Arial,sans-serif';
       ctx.textAlign = 'left';
       ctx.fillText('reviewwithai.netlify.app', 65, footerY);
       ctx.textAlign = 'right';
@@ -402,6 +449,26 @@ const Dashboard: React.FC = () => {
     refreshData();
   };
 
+  const handleOfferImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newOffers = [...(settingsForm.offers || [])];
+        const item = newOffers[index] || {
+          name: '',
+          image: '',
+          color: 'bg-indigo-600',
+          actualPrice: '₹0',
+          offerPrice: '₹0'
+        };
+        newOffers[index] = { ...item, image: reader.result as string };
+        setSettingsForm({ ...settingsForm, offers: newOffers });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Access Logic
   const now = Date.now();
   const msInDay = 24 * 60 * 60 * 1000;
@@ -429,8 +496,8 @@ const Dashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-slate-900/95 backdrop-blur-sm md:hidden flex flex-col p-6 animate-in slide-in-from-left duration-300">
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center space-x-3">
-              <div className="bg-indigo-600 p-2 rounded-lg"><MessageCircle size={20} className="text-white" /></div>
-              <span className="font-black text-white text-xl">SmartReview</span>
+              <img src="/logo.svg" alt="Logo" className="w-8 h-8" />
+              <span className="font-black text-white text-xl">Review With <span className="text-amber-400">AI</span></span>
             </div>
             <button onClick={() => setIsMobileMenuOpen(false)} className="bg-white/10 p-2 rounded-full text-white"><X size={24} /></button>
           </div>
@@ -440,6 +507,7 @@ const Dashboard: React.FC = () => {
             <NavItem active={activeTab === 'qr'} onClick={() => { setActiveTab('qr'); setIsMobileMenuOpen(false) }} icon={QrCode} label="My QR Code" />
             <NavItem active={activeTab === 'map'} onClick={() => { setActiveTab('map'); setIsMobileMenuOpen(false) }} icon={MapPin} label="Google Integration" />
             <NavItem active={activeTab === 'settings'} onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false) }} icon={Settings} label="Reward Settings" />
+            <NavItem active={activeTab === 'offers'} onClick={() => { setActiveTab('offers'); setIsMobileMenuOpen(false) }} icon={ShoppingBag} label="Manage Offers" />
             <NavItem active={activeTab === 'billing'} onClick={() => { setActiveTab('billing'); setIsMobileMenuOpen(false) }} icon={CreditCard} label={subscriptionLabel} />
             <NavItem active={activeTab === 'support'} onClick={() => { setActiveTab('support'); setIsMobileMenuOpen(false) }} icon={HelpCircle} label="Support" />
             <NavItem active={activeTab === 'profile'} onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false) }} icon={UserCircle} label="My Profile" />
@@ -481,6 +549,7 @@ const Dashboard: React.FC = () => {
           <NavItem active={activeTab === 'qr'} onClick={() => setActiveTab('qr')} icon={QrCode} label="My QR Code" />
           <NavItem active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={MapPin} label="Google Integration" />
           <NavItem active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={Settings} label="Reward Settings" />
+          <NavItem active={activeTab === 'offers'} onClick={() => setActiveTab('offers')} icon={ShoppingBag} label="Manage Offers" />
           <NavItem active={activeTab === 'billing'} onClick={() => setActiveTab('billing')} icon={CreditCard} label={subscriptionLabel} />
           <NavItem active={activeTab === 'support'} onClick={() => setActiveTab('support')} icon={HelpCircle} label="Support" />
           <NavItem active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={UserCircle} label="My Profile" />
@@ -592,10 +661,12 @@ const Dashboard: React.FC = () => {
                       <span>Download Options</span>
                     </button>
                   </div>
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
                   <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 rounded-full blur-2xl -ml-10 -mb-10"></div>
                 </div>
               </div>
+
+              {/* Customer Reviews Section */}
+              <CustomerReviews business={business} globalSettings={globalSettings} />
             </div>
           )}
 
@@ -668,7 +739,7 @@ const Dashboard: React.FC = () => {
               {/* LEFT SIDE: Download Options (Unchanged) */}
               <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm flex flex-col items-center text-center">
                 <div className="bg-white p-6 rounded-3xl border-4 border-slate-900 shadow-2xl mb-8">
-                  <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business.id}`)}&size=300x300`} className="w-56 h-56" alt="QR" />
+                  <img src={customQrUrl || `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business.id}`)}&size=300x300`} className="w-56 h-56" alt="QR" />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-2">Your Smart QR</h3>
                 <p className="text-slate-500 font-medium mb-8 max-w-xs">Placed at the counter, this QR is your gateway to 5-star reviews.</p>
@@ -710,8 +781,10 @@ const Dashboard: React.FC = () => {
           .poster-font-script { font-family: 'Great Vibes', cursive; }
           .poster-font-sans { font-family: 'Montserrat', sans-serif; }
           .paper-bg {
-            background-color: #fcfbf9;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-color: #fff;
+            background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('/poster-bg.png');
+            background-size: cover;
+            background-position: center;
           }
         `}
                 </style>
@@ -781,7 +854,7 @@ const Dashboard: React.FC = () => {
                   {/* 5. QR Code */}
                   <div className="p-[15px] bg-white border-[6px] border-[#1a1a1a] mb-[30px] z-10">
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business?.id}`)}&size=400x400&format=png&margin=10`}
+                      src={customQrUrl || `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(`${window.location.origin}/#/b/${business?.id}`)}&size=400x400`}
                       crossOrigin="anonymous"
                       className="w-[220px] h-[220px] block"
                       alt="QR"
@@ -849,6 +922,23 @@ const Dashboard: React.FC = () => {
                     </div>
                     <p className="font-bold text-slate-900 text-lg truncate">{business.name}</p>
                     <a href={business.googleMapsUrl} target="_blank" className="text-blue-500 text-sm font-bold hover:underline truncate block mt-1">{business.googleMapsUrl}</a>
+
+                    <div className="mt-4 pt-4 border-t border-slate-200">
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Google Place ID (Required for Reviews)</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Place ID (e.g. ChIJN1t_t75uEmsRUte9Y-ByA94)"
+                          value={business.googlePlaceId || ''}
+                          onChange={async (e) => {
+                            const val = e.target.value;
+                            setBusiness({ ...business, googlePlaceId: val });
+                            await api.updateBusiness(business.id, { googlePlaceId: val });
+                          }}
+                          className="flex-1 bg-white border border-slate-200 p-2 rounded-lg outline-none text-xs font-mono"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -908,6 +998,118 @@ const Dashboard: React.FC = () => {
                   )}
 
                   <button onClick={handleSaveSettings} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition-transform">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'offers' && (
+            <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
+                <div className="flex items-center space-x-4 mb-8">
+                  <div className="bg-orange-50 p-4 rounded-2xl text-orange-600"><ShoppingBag size={32} /></div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900">Manage Product Offers</h3>
+                    <p className="text-slate-500 font-medium">Customize the 5 highlight boxes shown at the bottom of your review page.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[0, 1, 2, 3, 4].map((index) => {
+                      const item = settingsForm.offers?.[index] || {
+                        name: '',
+                        image: '',
+                        color: 'bg-indigo-600',
+                        actualPrice: '₹0',
+                        offerPrice: '₹0'
+                      };
+                      return (
+                        <div key={index} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Offer Box {index + 1}</span>
+                            <div className={`w-4 h-4 rounded-full ${item.color}`}></div>
+                          </div>
+
+                          <div className="space-y-3">
+                            <input
+                              type="text"
+                              placeholder="Service/Product Name"
+                              value={item.name}
+                              onChange={(e) => {
+                                const newOffers = [...(settingsForm.offers || [])];
+                                newOffers[index] = { ...item, name: e.target.value };
+                                setSettingsForm({ ...settingsForm, offers: newOffers });
+                              }}
+                              className="w-full text-xs font-bold p-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                            <div className="flex flex-col space-y-2">
+                              {item.image ? (
+                                <img src={item.image} className="w-full h-24 object-cover rounded-xl border border-slate-200" alt="Preview" />
+                              ) : (
+                                <div className="w-full h-24 bg-slate-100 rounded-xl flex items-center justify-center border border-dashed border-slate-300">
+                                  <Upload size={20} className="text-slate-400" />
+                                </div>
+                              )}
+                              <label className="w-full py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-bold text-center cursor-pointer hover:bg-indigo-100 transition-colors">
+                                <span>{item.image ? 'Change Photo' : 'Upload Photo'}</span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  accept="image/*"
+                                  onChange={(e) => handleOfferImageUpload(index, e)}
+                                />
+                              </label>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                placeholder="Actual Price"
+                                value={item.actualPrice}
+                                onChange={(e) => {
+                                  const newOffers = [...(settingsForm.offers || [])];
+                                  newOffers[index] = { ...item, actualPrice: e.target.value };
+                                  setSettingsForm({ ...settingsForm, offers: newOffers });
+                                }}
+                                className="w-full text-xs font-bold p-3 bg-white border border-slate-200 rounded-xl outline-none"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Offer Price"
+                                value={item.offerPrice}
+                                onChange={(e) => {
+                                  const newOffers = [...(settingsForm.offers || [])];
+                                  newOffers[index] = { ...item, offerPrice: e.target.value };
+                                  setSettingsForm({ ...settingsForm, offers: newOffers });
+                                }}
+                                className="w-full text-xs font-bold p-3 bg-white border border-slate-200 rounded-xl outline-none"
+                              />
+                            </div>
+                            <select
+                              value={item.color}
+                              onChange={(e) => {
+                                const newOffers = [...(settingsForm.offers || [])];
+                                newOffers[index] = { ...item, color: e.target.value };
+                                setSettingsForm({ ...settingsForm, offers: newOffers });
+                              }}
+                              className="w-full text-[10px] font-bold p-3 bg-white border border-slate-200 rounded-xl outline-none"
+                            >
+                              <option value="bg-indigo-600">Indigo</option>
+                              <option value="bg-rose-500">Rose</option>
+                              <option value="bg-emerald-500">Emerald</option>
+                              <option value="bg-amber-500">Amber</option>
+                              <option value="bg-orange-500">Orange</option>
+                              <option value="bg-blue-900">Navy</option>
+                              <option value="bg-yellow-400">Yellow</option>
+                              <option value="bg-purple-700">Purple</option>
+                              <option value="bg-cyan-500">Cyan</option>
+                            </select>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button onClick={handleSaveSettings} className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl">Update Offers</button>
                 </div>
               </div>
             </div>

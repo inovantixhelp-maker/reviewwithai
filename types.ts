@@ -92,6 +92,15 @@ export interface Ticket {
   messages: Message[];
 }
 
+export interface OfferItem {
+  id: string;
+  name: string;
+  image: string;
+  color: string;
+  actualPrice: string;
+  offerPrice: string;
+}
+
 export interface Business {
   id: string;
   name: string;
@@ -107,6 +116,7 @@ export interface Business {
     rewardType: 'THANK_YOU' | 'COUPON';
     customMessage: string;
     couponCode: string;
+    offers?: OfferItem[];
   };
   fullAddress?: string;
   businessImage?: string; // base64
@@ -119,6 +129,7 @@ export interface GlobalSettings {
   upiLink: string;
   googleApiKey: string;
   whatsappApiKey: string;
+  serpapiToken?: string;
 }
 
 export interface Feedback {

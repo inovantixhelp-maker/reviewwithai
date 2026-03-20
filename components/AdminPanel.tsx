@@ -147,7 +147,7 @@ const AdminPanel: React.FC = () => {
 
     const newMessage: TicketMessage = {
       id: crypto.randomUUID(),
-      senderId: currentUser.email || 'admin@smartreview.com',
+      senderId: currentUser.email || 'admin@reviewwithai.com',
       senderName: 'Super Admin',
       text: replyText,
       timestamp: Date.now(),
@@ -385,6 +385,19 @@ const AdminPanel: React.FC = () => {
       }
       setIsBizModalOpen(false);
       refreshData();
+    }
+  };
+
+  const handleDeleteBusiness = async (bizId: string) => {
+    if (window.confirm("Are you sure you want to delete this business account? This action cannot be undone and will remove all associated data.")) {
+      try {
+        await api.deleteBusiness(bizId);
+        alert("Business deleted successfully.");
+        refreshData();
+      } catch (err: any) {
+        console.error(err);
+        alert("Error deleting business: " + (err.message || "Unknown error"));
+      }
     }
   };
 
@@ -973,7 +986,19 @@ const AdminPanel: React.FC = () => {
                                 <span>{biz.status}</span>
                               </button>
                             </td>
-                            <td className="px-6 py-5 text-right"><div className="flex justify-end space-x-2"><button onClick={() => handleImpersonate(biz.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl"><Eye size={18} /></button><button onClick={() => handleOpenBizModal(biz)} className="p-2 text-slate-400 hover:text-indigo-600 rounded-xl"><Edit2 size={18} /></button></div></td>
+                            <td className="px-6 py-5 text-right">
+                              <div className="flex justify-end space-x-2">
+                                <button onClick={() => handleImpersonate(biz.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl">
+                                  <Eye size={18} />
+                                </button>
+                                <button onClick={() => handleOpenBizModal(biz)} className="p-2 text-slate-400 hover:text-indigo-600 rounded-xl">
+                                  <Edit2 size={18} />
+                                </button>
+                                <button onClick={() => handleDeleteBusiness(biz.id)} className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl">
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         );
                       })}
@@ -1061,8 +1086,29 @@ const AdminPanel: React.FC = () => {
                   <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" value={globalSettings?.brandName} onChange={(e) => api.updateGlobalSettings({ brandName: e.target.value })} />
                 </SettingsBox>
                 <SettingsBox icon={Key} title="API Integrations">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Google Maps API</label>
-                  <input type="password" placeholder="••••••••" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">Google Maps API (Fallback)</label>
+                      <input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold" 
+                        value={globalSettings?.googleApiKey || ''}
+                        onChange={(e) => api.updateGlobalSettings({ googleApiKey: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase mb-1">SerpApi API Key (For Reviews)</label>
+                      <input 
+                        type="password" 
+                        value={globalSettings?.serpapiToken || ''}
+                        onChange={(e) => api.updateGlobalSettings({ serpapiToken: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-200 p-3 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
+                        placeholder="467a5d6382..."
+                      />
+                      <p className="text-[9px] text-slate-400 mt-1">Found in SerpApi Dashboard &gt; API Key Settings</p>
+                    </div>
+                  </div>
                 </SettingsBox>
               </div>
             </div>
@@ -1385,7 +1431,7 @@ const AdminPanel: React.FC = () => {
                           type="email"
                           readOnly
                           className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold text-slate-900"
-                          value={currentUser.email || 'admin@smartreview.com'}
+                          value={currentUser.email || 'admin@reviewwithai.com'}
                         />
                       </div>
                     </div>

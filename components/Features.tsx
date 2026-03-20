@@ -98,7 +98,7 @@ const Features = () => {
                         <div className="p-12 md:p-20 flex flex-col justify-center bg-blue-600 text-white relative">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700 opacity-90"></div>
                             <div className="relative z-10">
-                                <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Why Choose SmartReview?</h2>
+                                <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Why Choose Review With AI?</h2>
                                 <p className="text-blue-100 text-lg mb-10 leading-relaxed">
                                     We don't just collect reviews; we engineer growth. Our platform is built specifically for local businesses who need results without the complexity.
                                 </p>

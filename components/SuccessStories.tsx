@@ -11,7 +11,7 @@ const SuccessStories = () => {
             location: "New York, NY",
             rating: "4.9",
             reviews: "1,200+",
-            story: "Before SmartReview, we struggled to get customers to leave feedback. Now, it's automatic. Our Google ranking jumped from page 3 to the #1 spot in just 2 months.",
+            story: "Before Review With AI, we struggled to get customers to leave feedback. Now, it's automatic. Our Google ranking jumped from page 3 to the #1 spot in just 2 months.",
             owner: "Marcus Chen",
             role: "Founder",
             image: "https://images.unsplash.com/photo-1501339817302-382d129f817b?w=800&q=80"
@@ -46,7 +46,7 @@ const SuccessStories = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-6 leading-tight">Trusted by <span className="text-gradient">Local Gems</span></h1>
                     <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
-                        Discover how businesses like yours are using SmartReview to dominate their local markets and build lasting customer trust.
+                        Discover how businesses like yours are using Review With AI to dominate their local markets and build lasting customer trust.
                     </p>
                 </div>
             </section>
